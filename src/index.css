@@ -1,0 +1,54 @@
+body {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 300;
+  line-height: 1.625rem;
+  margin: 0;
+  background-color: var(--ivory);
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+input,
+button,
+textarea {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+ul li {
+  list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: inherit;
+}
+
+a,
+a:visited {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+p {
+  width: auto;
+}
