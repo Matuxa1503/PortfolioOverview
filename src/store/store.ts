@@ -1,7 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
+import assetsReducer from './assetsSlice';
 
 export const store = configureStore({
-  reducer: {},
+  reducer: {
+    assets: assetsReducer,
+  },
 });
 
 // Типы для удобства
