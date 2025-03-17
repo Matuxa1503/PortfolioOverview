@@ -1,15 +1,41 @@
+import { useEffect, useState } from 'react';
 import './App.css';
-import { useAppDispatch, useAppSelector } from './store/hooks';
+import { useAppSelector } from './store/hooks';
+import { Modal } from './modal/Modal';
+import axios from 'axios';
+import { Ticker } from './interfaces/Ticker';
 
 const App = () => {
   const assets = useAppSelector((state) => state.assets.assets);
-  const dispatch = useAppDispatch();
+  const [isOpenModal, setOpenModal] = useState<boolean>(false);
+  const [coins, setCoins] = useState<Ticker[]>([]);
+
+  const getBinanceData = async () => {
+    try {
+      const res = await axios.get('https://api.binance.com/api/v3/ticker/24hr');
+      setCoins(res.data);
+    } catch (err) {
+      console.error(err instanceof Error ? err.message : 'Unknown error');
+    }
+  };
+
+  useEffect(() => {
+    getBinanceData();
+  }, []);
 
   return (
     <>
+      {isOpenModal && <Modal setOpenModal={setOpenModal} coins={coins} />}
       <div>
         <h1>Portfolio Overview</h1>
-        <button>Добавить</button>
+        <button
+          onClick={() => {
+            setOpenModal(!isOpenModal);
+            document.body.style.overflow = 'hidden';
+          }}
+        >
+          Добавить
+        </button>
       </div>
       <div className="tableMoney">
         <table>
