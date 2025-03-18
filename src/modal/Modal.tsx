@@ -66,36 +66,22 @@ export const Modal: FC<ModalProps> = ({ setOpenModal, coins }) => {
   const handleAddCoin = () => {
     if (!selectedCoin) return;
 
-    dispatch(
-      addAsset({
-        name: selectedCoin.symbol,
-        count: amount,
-        price: Number(selectedCoin?.lastPrice),
-        totalPrice: amount * Number(selectedCoin?.lastPrice),
-        priceChange: Number(selectedCoin?.priceChangePercent),
-        walletPercent: 0,
-      })
-    );
-
-    setOpenModal(false);
-  };
-
-  // добавление монеты в localStorage
-  const setAssetInLocalStorage = () => {
     const currentAsset = {
-      name: selectedCoin?.symbol,
+      name: selectedCoin.symbol.toLowerCase(),
       count: amount,
       price: Number(selectedCoin?.lastPrice),
       totalPrice: amount * Number(selectedCoin?.lastPrice),
       priceChange: Number(selectedCoin?.priceChangePercent),
-      walletPercent: 100,
+      walletPercent: 0,
     };
 
+    dispatch(addAsset(currentAsset));
+
     const assetsArr = JSON.parse(localStorage.getItem('assets') || '[]');
-
     assetsArr.push(currentAsset);
-
     localStorage.setItem('assets', JSON.stringify(assetsArr));
+
+    setOpenModal(false);
   };
 
   return (
@@ -131,7 +117,6 @@ export const Modal: FC<ModalProps> = ({ setOpenModal, coins }) => {
           onSubmit={(e) => {
             e.preventDefault();
             handleAddCoin();
-            setAssetInLocalStorage();
           }}
         >
           <input

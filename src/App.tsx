@@ -1,16 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import { Modal } from './modal/Modal';
 import axios from 'axios';
 import { Ticker } from './interfaces/Ticker';
-import { deleteAsset, setAssetsFromStorage } from './store/assetsSlice';
+import { deleteAsset, setAssetsFromStorage, updateAssetPrice } from './store/assetsSlice';
 
 const App = () => {
-  const assets = useAppSelector((state) => state.assets.assets);
+  const assets = useAppSelector((state) => state.assets);
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
   const [coins, setCoins] = useState<Ticker[]>([]);
   const dispatch = useAppDispatch();
+  const ws = useRef<WebSocket>(null);
 
   const getBinanceData = async () => {
     try {
@@ -22,8 +23,10 @@ const App = () => {
   };
 
   useEffect(() => {
+    // all coins
     getBinanceData();
 
+    // localStorage
     if (!localStorage.getItem('assets')) {
       localStorage.setItem('assets', '[]');
     } else {
@@ -33,6 +36,53 @@ const App = () => {
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (!assets.tickers || assets.tickers.length === 0) {
+      return;
+    }
+
+    const tickersArr = assets.tickers;
+    const streams = tickersArr.map((ticker) => `${ticker}@ticker`).join('/');
+
+    const interval = setInterval(() => {
+      ws.current = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}`);
+
+      ws.current.onopen = () => {
+        console.log('WebSocket open');
+      };
+
+      ws.current.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        const data = message.data;
+        console.log(data);
+
+        dispatch(updateAssetPrice({ coinName: data.s.toLowerCase(), price: Number(data.c), priceChange: Number(data.P) }));
+      };
+
+      ws.current.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
+
+      ws.current.onclose = () => {
+        console.log('WebSocket closed');
+      };
+
+      // Закрываем соединение через 3 секунды
+      const closeTimeout = setTimeout(() => {
+        ws.current?.close();
+      }, 3000);
+
+      // Очищаем таймаут при очистке эффекта
+      return () => clearTimeout(closeTimeout);
+    }, 8000); // Интервал 8 секунд
+
+    return () => clearInterval(interval);
+  }, [assets.tickers]);
+
+  useEffect(() => {
+    localStorage.setItem('assets', JSON.stringify(assets.assets));
+  }, [assets.assets]);
 
   const handleRemoveCoin = (coinName: string, totalPrice: number) => {
     dispatch(deleteAsset({ coinName, totalPrice }));
@@ -68,7 +118,7 @@ const App = () => {
               <th>Изм. за 24 ч.</th>
               <th>% портфеля</th>
             </tr>
-            {assets.map((asset, i) => (
+            {assets.assets.map((asset, i) => (
               <tr className="asset" key={i} onClick={() => handleRemoveCoin(asset.name, asset.totalPrice)}>
                 <td>{asset.name}</td>
                 <td>{asset.count}</td>
