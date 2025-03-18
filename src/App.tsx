@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from './store/hooks';
 import { Modal } from './modal/Modal';
 import axios from 'axios';
 import { Ticker } from './interfaces/Ticker';
-import { deleteAsset } from './store/assetsSlice';
+import { deleteAsset, setAssetsFromStorage } from './store/assetsSlice';
 
 const App = () => {
   const assets = useAppSelector((state) => state.assets.assets);
@@ -23,10 +23,24 @@ const App = () => {
 
   useEffect(() => {
     getBinanceData();
+
+    if (!localStorage.getItem('assets')) {
+      localStorage.setItem('assets', '[]');
+    } else {
+      const data = JSON.parse(localStorage.getItem('assets') || '[]');
+      if (data.length > 0) {
+        dispatch(setAssetsFromStorage(data));
+      }
+    }
   }, []);
 
   const handleRemoveCoin = (coinName: string, totalPrice: number) => {
     dispatch(deleteAsset({ coinName, totalPrice }));
+
+    // удаление из localStorage
+    const assetsArr = JSON.parse(localStorage.getItem('assets') || '[]');
+    const newAssetsArr = assetsArr.filter((item) => item.name !== coinName);
+    localStorage.setItem('assets', JSON.stringify(newAssetsArr));
   };
 
   return (

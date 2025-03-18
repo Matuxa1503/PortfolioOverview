@@ -20,7 +20,7 @@ interface deleteAsset {
 }
 
 const initialState: Assets = {
-  assets: [{ name: 'BTC', count: 1, price: 82000, totalPrice: 82000, priceChange: -2, walletPercent: 100 }],
+  assets: [],
   allTotalPrice: 0,
 };
 
@@ -54,9 +54,20 @@ export const assetsSlice = createSlice({
         asset.walletPercent = mathFunc(asset.totalPrice, state.allTotalPrice);
       });
     },
+    setAssetsFromStorage: (state, action: PayloadAction<Asset[]>) => {
+      state.assets = action.payload;
+
+      action.payload.forEach((item) => {
+        state.allTotalPrice += item.totalPrice;
+      });
+
+      state.assets.forEach((asset) => {
+        asset.walletPercent = mathFunc(asset.totalPrice, state.allTotalPrice);
+      });
+    },
   },
 });
 
-export const { addAsset, deleteAsset } = assetsSlice.actions;
+export const { addAsset, deleteAsset, setAssetsFromStorage } = assetsSlice.actions;
 
 export default assetsSlice.reducer;
