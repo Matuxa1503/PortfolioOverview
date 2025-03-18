@@ -6,3 +6,7 @@
 th {
   padding: 4px;
 }
+
+.asset {
+  cursor: pointer;
+}

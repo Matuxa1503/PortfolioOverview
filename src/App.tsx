@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import { useAppSelector } from './store/hooks';
+import { useAppDispatch, useAppSelector } from './store/hooks';
 import { Modal } from './modal/Modal';
 import axios from 'axios';
 import { Ticker } from './interfaces/Ticker';
+import { deleteAsset } from './store/assetsSlice';
 
 const App = () => {
   const assets = useAppSelector((state) => state.assets.assets);
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
   const [coins, setCoins] = useState<Ticker[]>([]);
+  const dispatch = useAppDispatch();
 
   const getBinanceData = async () => {
     try {
@@ -22,6 +24,10 @@ const App = () => {
   useEffect(() => {
     getBinanceData();
   }, []);
+
+  const handleRemoveCoin = (coinName: string, totalPrice: number) => {
+    dispatch(deleteAsset({ coinName, totalPrice }));
+  };
 
   return (
     <>
@@ -48,8 +54,8 @@ const App = () => {
               <th>Изм. за 24 ч.</th>
               <th>% портфеля</th>
             </tr>
-            {assets.map((asset) => (
-              <tr key={asset.id}>
+            {assets.map((asset, i) => (
+              <tr className="asset" key={i} onClick={() => handleRemoveCoin(asset.name, asset.totalPrice)}>
                 <td>{asset.name}</td>
                 <td>{asset.count}</td>
                 <td>${asset.price}</td>

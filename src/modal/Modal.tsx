@@ -1,6 +1,8 @@
 import { FC, useState } from 'react';
 import s from './Modal.module.scss';
 import { Ticker } from '../interfaces/Ticker';
+import { useAppDispatch } from '../store/hooks';
+import { addAsset } from '../store/assetsSlice';
 
 interface ModalProps {
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -8,15 +10,17 @@ interface ModalProps {
 }
 
 interface SelectedCoin {
-  symbol: string | undefined;
-  lastPrice: string | undefined;
+  symbol: string;
+  lastPrice: string;
+  priceChangePercent: number;
 }
 
 export const Modal: FC<ModalProps> = ({ setOpenModal, coins }) => {
   const [text, setText] = useState<string>('');
 
-  const [selectedCoin, setSelectedCoin] = useState<SelectedCoin | null>(null);
+  const [selectedCoin, setSelectedCoin] = useState<SelectedCoin>();
   const [amount, setAmount] = useState<number>(0);
+  const dispatch = useAppDispatch();
 
   const popularCoins: string[] = [
     'BTCUSDT',
@@ -59,6 +63,23 @@ export const Modal: FC<ModalProps> = ({ setOpenModal, coins }) => {
     }
   };
 
+  const handleAddCoin = () => {
+    if (!selectedCoin) return;
+
+    dispatch(
+      addAsset({
+        name: selectedCoin.symbol,
+        count: amount,
+        price: Number(selectedCoin?.lastPrice),
+        totalPrice: amount * Number(selectedCoin?.lastPrice),
+        priceChange: Number(selectedCoin?.priceChangePercent),
+        walletPercent: 100,
+      })
+    );
+
+    setOpenModal(false);
+  };
+
   return (
     <div className={s.overlayStyles} onClick={handleOverlay}>
       <div className={s.modal}>
@@ -68,7 +89,13 @@ export const Modal: FC<ModalProps> = ({ setOpenModal, coins }) => {
             <div
               key={i}
               className={s.coinItem}
-              onClick={() => setSelectedCoin({ symbol: coin?.symbol, lastPrice: Number(coin?.lastPrice).toFixed(2) })}
+              onClick={() => {
+                setSelectedCoin({
+                  symbol: coin?.symbol ?? '',
+                  lastPrice: Number(coin?.lastPrice).toFixed(2),
+                  priceChangePercent: Number(coin?.priceChangePercent),
+                });
+              }}
             >
               <span>{coin?.symbol}</span>
               <span>${Number(coin?.lastPrice).toFixed(2)}</span>
@@ -85,6 +112,7 @@ export const Modal: FC<ModalProps> = ({ setOpenModal, coins }) => {
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            handleAddCoin();
           }}
         >
           <input
