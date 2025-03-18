@@ -1,32 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
-import { useAppDispatch, useAppSelector } from './store/hooks';
 import { Modal } from './modal/Modal';
-import axios from 'axios';
-import { Ticker } from './interfaces/Ticker';
 import { deleteAsset, setAssetsFromStorage, updateAssetPrice } from './store/assetsSlice';
 import { connectWebSocket } from './webSocketService';
+import { useBinanceCoins } from './hooks/useBinanceCoins';
+import { useAppDispatch, useAppSelector } from './hooks/reduxHooks';
 
 const App = () => {
   const assets = useAppSelector((state) => state.assets);
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
-  const [coins, setCoins] = useState<Ticker[]>([]);
+  const { coins, error } = useBinanceCoins();
   const dispatch = useAppDispatch();
   const socketRef = useRef<WebSocket>(null);
 
-  const getBinanceData = async () => {
-    try {
-      const res = await axios.get('https://api.binance.com/api/v3/ticker/24hr');
-      setCoins(res.data);
-    } catch (err) {
-      console.error(err instanceof Error ? err.message : 'Unknown error');
-    }
-  };
-
   useEffect(() => {
-    // all coins
-    getBinanceData();
-
     // localStorage
     if (!localStorage.getItem('assets')) {
       localStorage.setItem('assets', '[]');
