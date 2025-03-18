@@ -5,13 +5,14 @@ import { Modal } from './modal/Modal';
 import axios from 'axios';
 import { Ticker } from './interfaces/Ticker';
 import { deleteAsset, setAssetsFromStorage, updateAssetPrice } from './store/assetsSlice';
+import { connectWebSocket } from './webSocketService';
 
 const App = () => {
   const assets = useAppSelector((state) => state.assets);
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
   const [coins, setCoins] = useState<Ticker[]>([]);
   const dispatch = useAppDispatch();
-  const ws = useRef<WebSocket>(null);
+  const socketRef = useRef<WebSocket>(null);
 
   const getBinanceData = async () => {
     try {
@@ -37,48 +38,31 @@ const App = () => {
     }
   }, []);
 
+  // webSocket
   useEffect(() => {
-    if (!assets.tickers || assets.tickers.length === 0) {
-      return;
-    }
+    if (!assets.tickers || assets.tickers.length === 0) return;
 
-    const tickersArr = assets.tickers;
-    const streams = tickersArr.map((ticker) => `${ticker}@ticker`).join('/');
+    const streams = assets.tickers.map((ticker) => `${ticker}@ticker`).join('/');
+
+    // запуск интервала. Создание нового соединения в connectWebSocket и закрытие соединения через 3 секунды
+    const connectAndHandleSocket = () => {
+      socketRef.current = connectWebSocket(socketRef, streams, (data) =>
+        dispatch(updateAssetPrice({ coinName: data.s.toLowerCase(), price: Number(data.c), priceChange: Number(data.P) }))
+      );
+
+      const closeTimeout = setTimeout(() => {
+        socketRef.current?.close();
+      }, 3000);
+      return closeTimeout;
+    };
 
     const interval = setInterval(() => {
-      ws.current = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}`);
-
-      ws.current.onopen = () => {
-        console.log('WebSocket open');
-      };
-
-      ws.current.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-        const data = message.data;
-        console.log(data);
-
-        dispatch(updateAssetPrice({ coinName: data.s.toLowerCase(), price: Number(data.c), priceChange: Number(data.P) }));
-      };
-
-      ws.current.onerror = (error) => {
-        console.error('WebSocket error:', error);
-      };
-
-      ws.current.onclose = () => {
-        console.log('WebSocket closed');
-      };
-
-      // Закрываем соединение через 3 секунды
-      const closeTimeout = setTimeout(() => {
-        ws.current?.close();
-      }, 3000);
-
-      // Очищаем таймаут при очистке эффекта
+      const closeTimeout = connectAndHandleSocket();
       return () => clearTimeout(closeTimeout);
-    }, 8000); // Интервал 8 секунд
+    }, 8000);
 
     return () => clearInterval(interval);
-  }, [assets.tickers]);
+  }, [assets.tickers, dispatch]);
 
   useEffect(() => {
     localStorage.setItem('assets', JSON.stringify(assets.assets));
