@@ -1,16 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { Modal } from './modal/Modal';
 import { deleteAsset, setAssetsFromStorage, updateAsset } from './store/assetsSlice';
 import { Asset } from './interfaces/interfaces';
 import { connectWebSocket } from './services/webSocketService';
-import { useBinanceCoins } from './hooks/useBinanceCoins';
 import { useAppDispatch, useAppSelector } from './hooks/reduxHooks';
 import './App.css';
 
-const App = () => {
+const App: FC = () => {
   const assets = useAppSelector((state) => state.assets);
   const dispatch = useAppDispatch();
-  const { coins } = useBinanceCoins();
   const socketRef = useRef<WebSocket>(null);
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
 
@@ -67,7 +65,7 @@ const App = () => {
 
   return (
     <>
-      {isOpenModal && <Modal setOpenModal={setOpenModal} coins={coins} />}
+      {isOpenModal && <Modal setOpenModal={setOpenModal} />}
       <div>
         <h1>Portfolio Overview</h1>
         <button onClick={() => setOpenModal(!isOpenModal)}>Добавить</button>

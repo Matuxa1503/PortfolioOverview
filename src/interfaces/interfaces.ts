@@ -47,3 +47,13 @@ export interface updAsset {
   price: number;
   priceChange: number;
 }
+
+export interface ModalProps {
+  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface SelectedCoin {
+  ticker: string;
+  lastPrice: string;
+  priceChangePercent: number;
+}

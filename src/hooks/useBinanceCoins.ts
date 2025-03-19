@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Ticker } from '../interfaces/Ticker';
 import axios from 'axios';
+import { Ticker } from '../interfaces/interfaces';
 
 export const useBinanceCoins = () => {
-  const [coins, setCoins] = useState<Ticker[]>([]);
+  const [coinsBinance, setCoins] = useState<Ticker[]>([]);
 
   useEffect(() => {
     const getBinanceData = async () => {
@@ -17,5 +17,5 @@ export const useBinanceCoins = () => {
     getBinanceData();
   }, []);
 
-  return { coins };
+  return { coinsBinance };
 };
