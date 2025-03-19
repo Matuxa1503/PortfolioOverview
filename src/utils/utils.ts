@@ -16,11 +16,14 @@ export const recalculateWallet = (state: Assets) => {
 
 export const filterCoins = (coinsBinance: Ticker[], topCoins: Ticker[], text: string) => {
   // если ввели текст то фильтруем. Если нет текста то показываем топовые монеты
+
   if (text) {
-    coinsBinance.filter((coin) => {
-      return coin.symbol.toLowerCase().startsWith(text.toLowerCase());
-    });
+    return coinsBinance.filter((coin) => coin.symbol.toLowerCase().startsWith(text.toLowerCase()));
   } else {
     return topCoins;
   }
+};
+
+export const formatNumber = (num: number) => {
+  return +num.toFixed(2);
 };

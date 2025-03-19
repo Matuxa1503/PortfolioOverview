@@ -10,32 +10,87 @@
   align-items: center;
 
   .modal {
-    width: 400px;
+    width: 600px;
     background-color: #fff;
     padding: 15px;
     border-radius: 10px;
 
+    .input {
+      width: 100%;
+      padding: 10px 15px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      outline: none;
+      transition: all 0.2s ease-in-out;
+
+      &:focus {
+        border-color: #ff69b4;
+        box-shadow: 0 0 5px rgba(255, 105, 180, 0.5);
+      }
+
+      &::placeholder {
+        color: #aaa;
+      }
+    }
+
+    .listCoins {
+      width: 100%;
+
+      font-size: 25px;
+      height: 400px;
+      overflow-y: scroll;
+
+      .coinItem {
+        display: flex;
+        cursor: pointer;
+        gap: 75px;
+        margin-bottom: 10px;
+        text-align: center;
+
+        span {
+          display: flex;
+          flex: 1 1;
+        }
+      }
+    }
+
     .selectedCoin {
       display: flex;
-      margin-top: 15px;
+      font-size: 28px;
+      margin: 20px 0;
       gap: 10px;
       justify-content: center;
     }
   }
 
-  .listCoins {
-    width: 100%;
+  .btnBlock {
     display: flex;
-    flex-direction: column;
-    font-size: 16px;
-    height: 200px;
-    overflow-y: scroll;
+    justify-content: space-around;
 
-    .coinItem {
-      display: flex;
-      align-items: center;
+    .btn {
+      margin-top: 20px;
+      padding: 10px 16px;
+      background-color: #ff4d6d;
+      color: #fff;
+      font-size: 30px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
-      gap: 35px;
+      transition: background 0.2s ease-in-out;
+
+      &:hover {
+        background-color: #e04360;
+      }
     }
+  }
+
+  .priceUp {
+    color: green;
+  }
+  .priceDown {
+    color: red;
   }
 }

@@ -4,7 +4,8 @@ import { deleteAsset, setAssetsFromStorage, updateAsset } from './store/assetsSl
 import { Asset } from './interfaces/interfaces';
 import { connectWebSocket } from './services/webSocketService';
 import { useAppDispatch, useAppSelector } from './hooks/reduxHooks';
-import './App.css';
+import s from './App.module.scss';
+import { formatNumber } from './utils/utils';
 
 const App: FC = () => {
   const assets = useAppSelector((state) => state.assets);
@@ -66,37 +67,41 @@ const App: FC = () => {
   return (
     <>
       {isOpenModal && <Modal setOpenModal={setOpenModal} />}
-      <div>
-        <h1>Portfolio Overview</h1>
-        <button onClick={() => setOpenModal(!isOpenModal)}>Добавить</button>
-        <span>Цена портфеля: {assets.totalAssetsValue}$</span>
+      <div className={s.header}>
+        <h1 className={s.title}>Portfolio Overview</h1>
+        <div className={s.info}>
+          <span>
+            Цена портфеля: <b>${formatNumber(assets.totalAssetsValue)}</b>
+          </span>
+          <button className={s.btn} onClick={() => setOpenModal(!isOpenModal)}>
+            Добавить
+          </button>
+        </div>
       </div>
 
       {assets.assets.length ? (
-        <div className="tableMoney">
-          <table>
-            <tbody>
-              <tr>
-                <th>Актив</th>
-                <th>Колич</th>
-                <th>Цена</th>
-                <th>Общ стоим</th>
-                <th>Изм. за 24 ч.</th>
-                <th>% портфеля</th>
+        <table className={s.table}>
+          <tbody className={s.tbody}>
+            <tr>
+              <th>Актив</th>
+              <th>Количество</th>
+              <th>Цена</th>
+              <th>Общая стоимость</th>
+              <th>Изм. за 24 ч.</th>
+              <th>% портфеля</th>
+            </tr>
+            {assets.assets.map((asset, i) => (
+              <tr className={s.asset} key={i} onClick={() => handleRemoveCoin(asset.name, asset.totalPrice)}>
+                <td>{asset.name.toUpperCase()}</td>
+                <td>{asset.count}</td>
+                <td>${formatNumber(asset.price)}</td>
+                <td>${formatNumber(asset.totalPrice)}</td>
+                <td className={asset.priceChange >= 0 ? s.priceUp : s.priceDown}>{formatNumber(asset.priceChange)}%</td>
+                <td>{formatNumber(asset.walletPercent)}%</td>
               </tr>
-              {assets.assets.map((asset, i) => (
-                <tr className="asset" key={i} onClick={() => handleRemoveCoin(asset.name, asset.totalPrice)}>
-                  <td>{asset.name}</td>
-                  <td>{asset.count}</td>
-                  <td>${asset.price}</td>
-                  <td>${asset.totalPrice}</td>
-                  <td>{asset.priceChange}%</td>
-                  <td>{asset.walletPercent}%</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       ) : (
         <div>Нет активов в вашем портфеле. Добавьте что-нибудь, чтобы начать!</div>
       )}

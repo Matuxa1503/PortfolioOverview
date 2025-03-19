@@ -1,9 +1,12 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:300,regular,500,700);
+
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 1.25rem;
   font-weight: 300;
   line-height: 1.625rem;
-  margin: 0;
+  margin: 0 auto;
+  padding: 15px;
 }
 
 * {

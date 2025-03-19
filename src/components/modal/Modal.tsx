@@ -4,7 +4,7 @@ import { useAppDispatch } from '../../hooks/reduxHooks';
 import { ModalProps, SelectedCoin, Ticker } from '../../interfaces/interfaces';
 import { useBinanceCoins } from '../../hooks/useBinanceCoins';
 import { popularCoins } from '../../constants/popularCoins';
-import { filterCoins } from '../../utils/utils';
+import { filterCoins, formatNumber } from '../../utils/utils';
 import s from './Modal.module.scss';
 
 export const Modal: FC<ModalProps> = ({ setOpenModal }) => {
@@ -23,7 +23,7 @@ export const Modal: FC<ModalProps> = ({ setOpenModal }) => {
   const handleSelectCoin = (coin: Ticker) => {
     setSelectedCoin({
       ticker: coin.symbol,
-      lastPrice: Number(coin.lastPrice).toFixed(2),
+      lastPrice: Number(coin.lastPrice),
       priceChangePercent: Number(coin.priceChangePercent),
     });
   };
@@ -34,8 +34,8 @@ export const Modal: FC<ModalProps> = ({ setOpenModal }) => {
     const asset = {
       name: selectedCoin.ticker,
       count: amount,
-      price: +selectedCoin.lastPrice,
-      totalPrice: amount * +selectedCoin.lastPrice,
+      price: selectedCoin.lastPrice,
+      totalPrice: amount * selectedCoin.lastPrice,
       priceChange: selectedCoin.priceChangePercent,
       walletPercent: 0,
     };
@@ -51,19 +51,21 @@ export const Modal: FC<ModalProps> = ({ setOpenModal }) => {
   return (
     <div className={s.overlayStyles} onClick={() => setOpenModal(false)}>
       <div className={s.modal} onClick={(e) => e.stopPropagation()}>
-        <input type="text" placeholder="Поиск монеты" value={text} onChange={(e) => setText(e.target.value)} />
+        <input className={s.input} type="text" placeholder="Поиск монеты" value={text} onChange={(e) => setText(e.target.value)} />
 
         <div className={s.listCoins}>
           {filteredCoins?.length ? (
             filteredCoins.map((coin, i) => (
               <div key={i} className={s.coinItem} onClick={() => handleSelectCoin(coin)}>
                 <span>{coin.symbol}</span>
-                <span>${Number(coin.lastPrice).toFixed(2)}</span>
-                <span>{Number(coin.priceChangePercent).toFixed(5)}%</span>
+                <span>${formatNumber(+coin.lastPrice)}</span>
+                <span className={parseFloat(coin.priceChangePercent) >= 0 ? s.priceUp : s.priceDown}>
+                  {formatNumber(+coin.priceChangePercent)}%
+                </span>
               </div>
             ))
           ) : (
-            <p className={s.noResults}>Загрузка монет...</p>
+            <p className={s.noResults}>Монета не найдена</p>
           )}
         </div>
 
@@ -81,18 +83,20 @@ export const Modal: FC<ModalProps> = ({ setOpenModal }) => {
               }}
             >
               <input
+                className={s.input}
                 type="number"
                 placeholder="Количество"
                 step="1"
-                min="1"
                 max="1000"
                 value={amount}
                 onChange={(e) => setAmount(Number(e.target.value))}
               />
-              <button>Добавить</button>
-              <button type="button" onClick={() => setOpenModal(false)}>
-                Отмена
-              </button>
+              <div className={s.btnBlock}>
+                <button className={s.btn}>Добавить</button>
+                <button className={s.btn} type="button" onClick={() => setOpenModal(false)}>
+                  Отмена
+                </button>
+              </div>
             </form>
           </>
         )}

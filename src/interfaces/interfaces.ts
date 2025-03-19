@@ -54,6 +54,6 @@ export interface ModalProps {
 
 export interface SelectedCoin {
   ticker: string;
-  lastPrice: string;
+  lastPrice: number;
   priceChangePercent: number;
 }
