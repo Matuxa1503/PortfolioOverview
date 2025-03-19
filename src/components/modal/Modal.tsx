@@ -1,10 +1,10 @@
 import { FC, useState } from 'react';
-import { addAsset } from '../store/assetsSlice';
-import { useAppDispatch } from '../hooks/reduxHooks';
-import { ModalProps, SelectedCoin, Ticker } from '../interfaces/interfaces';
-import { useBinanceCoins } from '../hooks/useBinanceCoins';
-import { popularCoins } from '../constants/popularCoins';
-import { filterCoins } from '../utils/utils';
+import { addAsset } from '../../store/assetsSlice';
+import { useAppDispatch } from '../../hooks/reduxHooks';
+import { ModalProps, SelectedCoin, Ticker } from '../../interfaces/interfaces';
+import { useBinanceCoins } from '../../hooks/useBinanceCoins';
+import { popularCoins } from '../../constants/popularCoins';
+import { filterCoins } from '../../utils/utils';
 import s from './Modal.module.scss';
 
 export const Modal: FC<ModalProps> = ({ setOpenModal }) => {

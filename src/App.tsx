@@ -1,5 +1,5 @@
 import { FC, useEffect, useRef, useState } from 'react';
-import { Modal } from './modal/Modal';
+import { Modal } from './components/modal/Modal';
 import { deleteAsset, setAssetsFromStorage, updateAsset } from './store/assetsSlice';
 import { Asset } from './interfaces/interfaces';
 import { connectWebSocket } from './services/webSocketService';
