@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Modal } from './modal/Modal';
 import { deleteAsset, setAssetsFromStorage, updateAsset } from './store/assetsSlice';
-import { connectWebSocket } from './webSocketService';
+import { Asset } from './interfaces/interfaces';
+import { connectWebSocket } from './services/webSocketService';
 import { useBinanceCoins } from './hooks/useBinanceCoins';
 import { useAppDispatch, useAppSelector } from './hooks/reduxHooks';
 import './App.css';
-
-// СДЕЛАТЬ СТИЛИЗАЦИЮ ЭТОЙ СТРАНИЦЫ И ЗАПУШИТЬ
 
 const App = () => {
   const assets = useAppSelector((state) => state.assets);
