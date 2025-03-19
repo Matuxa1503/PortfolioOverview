@@ -1,39 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-interface Asset {
-  name: string;
-  count: number;
-  price: number;
-  totalPrice: number;
-  priceChange: number;
-  walletPercent: number;
-}
-
-interface Assets {
-  assets: Asset[];
-  allTotalPrice: number;
-  tickers: string[];
-}
-
-interface deleteAsset {
-  coinName: string;
-  totalPrice: number;
-}
-
-interface updateAsset {
-  coinName: string;
-  price: number;
-  priceChange: number;
-}
+import { recalculateWallet } from '../utils/utils';
+import { Asset, Assets, delAsset, updAsset } from '../interfaces/interfaces';
 
 const initialState: Assets = {
   assets: [],
-  allTotalPrice: 0,
   tickers: [],
-};
-
-const mathFunc = (totalPrice: number, allTotalPrice: number): number => {
-  return allTotalPrice > 0 ? (totalPrice / allTotalPrice) * 100 : 0;
+  totalAssetsValue: 0,
 };
 
 export const assetsSlice = createSlice({
@@ -41,79 +13,50 @@ export const assetsSlice = createSlice({
   initialState,
   reducers: {
     addAsset: (state, action: PayloadAction<Asset>) => {
-      // общая сумма
-      state.allTotalPrice += action.payload.totalPrice;
+      const assetPayload = action.payload;
 
       // проверка на существование монеты
-      const existingAsset = state.assets.find((asset) => asset.name === action.payload.name);
+      const existingAsset = state.assets.find((asset) => asset.name === assetPayload.name);
       if (existingAsset) {
-        existingAsset.count += action.payload.count;
-        existingAsset.totalPrice += action.payload.totalPrice;
+        existingAsset.count += assetPayload.count;
+        existingAsset.totalPrice += assetPayload.totalPrice;
       } else {
-        // если ее нет, добавляем в массив монет и тикеров
-        state.assets.push(action.payload);
-        state.tickers.push(action.payload.name);
+        state.assets.push(assetPayload);
+        state.tickers.push(assetPayload.name);
       }
-
-      // обновляем проценты
-      state.assets.forEach((asset) => {
-        asset.walletPercent = mathFunc(asset.totalPrice, state.allTotalPrice);
-      });
+      recalculateWallet(state);
     },
 
-    deleteAsset: (state, action: PayloadAction<deleteAsset>) => {
-      // удаление монеты по названию
-      state.assets = state.assets.filter((asset) => asset.name !== action.payload.coinName);
-      state.tickers = state.tickers.filter((ticker) => ticker !== action.payload.coinName);
-
-      // пересчитываем сумму портфеля
-      state.allTotalPrice = state.assets.reduce((acc, asset) => acc + asset.totalPrice, 0);
-
-      // обновляем проценты
-      state.assets.forEach((asset) => {
-        asset.walletPercent = mathFunc(asset.totalPrice, state.allTotalPrice);
-      });
-    },
-
-    setAssetsFromStorage: (state, action: PayloadAction<Asset[]>) => {
-      // загружаем массив
-      state.assets = action.payload;
-
-      // сбрасываем и пересчитываем сумму портфеля
-      state.allTotalPrice = state.assets.reduce((acc, asset) => acc + asset.totalPrice, 0);
-
-      // обновляем проценты
-      state.assets.forEach((asset) => {
-        asset.walletPercent = mathFunc(asset.totalPrice, state.allTotalPrice);
-      });
-
-      // добавляем монеты в тикеры
-      state.tickers = action.payload.map((asset) => asset.name.toLowerCase());
-    },
-
-    updateAssetPrice: (state, action: PayloadAction<updateAsset>) => {
+    updateAsset: (state, action: PayloadAction<updAsset>) => {
       const { coinName, price, priceChange } = action.payload;
 
-      // Находим актив
       const asset = state.assets.find((item) => item.name === coinName);
-
       if (asset) {
         asset.price = price;
         asset.totalPrice = price * asset.count;
         asset.priceChange = priceChange;
       }
+      recalculateWallet(state);
+    },
 
-      // пересчитываем `allTotalPrice`
-      state.allTotalPrice = state.assets.reduce((acc, asset) => acc + asset.totalPrice, 0);
+    deleteAsset: (state, action: PayloadAction<delAsset>) => {
+      const assetPayloadName = action.payload.coinName;
 
-      // обновляем `walletPercent` для всех активов
-      state.assets.forEach((asset) => {
-        asset.walletPercent = mathFunc(asset.totalPrice, state.allTotalPrice);
-      });
+      state.assets = state.assets.filter((asset) => asset.name !== assetPayloadName);
+      state.tickers = state.tickers.filter((ticker) => ticker !== assetPayloadName);
+      recalculateWallet(state);
+    },
+
+    setAssetsFromStorage: (state, action: PayloadAction<Asset[]>) => {
+      const arrAssetsPayload = action.payload;
+
+      state.assets = arrAssetsPayload;
+      state.tickers = arrAssetsPayload.map((asset) => asset.name);
+      recalculateWallet(state);
     },
   },
 });
 
-export const { addAsset, deleteAsset, setAssetsFromStorage, updateAssetPrice } = assetsSlice.actions;
+export const { addAsset, deleteAsset, setAssetsFromStorage, updateAsset } = assetsSlice.actions;
 
 export default assetsSlice.reducer;

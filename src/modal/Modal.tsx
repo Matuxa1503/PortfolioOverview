@@ -1,8 +1,8 @@
 import { FC, useState } from 'react';
 import s from './Modal.module.scss';
-import { Ticker } from '../interfaces/Ticker';
 import { addAsset } from '../store/assetsSlice';
 import { useAppDispatch } from '../hooks/reduxHooks';
+import { Ticker } from '../interfaces/interfaces';
 
 interface ModalProps {
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;

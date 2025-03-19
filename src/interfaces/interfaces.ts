@@ -21,3 +21,29 @@ export interface Ticker {
   lastId: number;
   count: number;
 }
+
+export interface Assets {
+  assets: Asset[];
+  tickers: string[];
+  totalAssetsValue: number;
+}
+
+export interface Asset {
+  name: string;
+  count: number;
+  price: number;
+  totalPrice: number;
+  priceChange: number;
+  walletPercent: number;
+}
+
+export interface delAsset {
+  coinName: string;
+  totalPrice: number;
+}
+
+export interface updAsset {
+  coinName: string;
+  price: number;
+  priceChange: number;
+}
