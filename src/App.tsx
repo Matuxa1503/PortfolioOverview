@@ -38,7 +38,7 @@ const App: FC = () => {
     // запуск интервала. Создание нового соединения в connectWebSocket и закрытие соединения через 3 секунды
     const connectAndHandleSocket = () => {
       socketRef.current = connectWebSocket(socketRef, streams, (data) =>
-        dispatch(updateAsset({ coinName: data.s.toLowerCase(), price: Number(data.c), priceChange: Number(data.P) }))
+        dispatch(updateAsset({ coinName: data.s.toUpperCase(), price: Number(data.c), priceChange: Number(data.P) }))
       );
 
       const closeTimeout = setTimeout(() => {
