@@ -87,6 +87,7 @@ export const Modal: FC<ModalProps> = ({ setOpenModal }) => {
                 type="number"
                 placeholder="Количество"
                 step="1"
+                min="1"
                 max="1000"
                 value={amount}
                 onChange={(e) => setAmount(Number(e.target.value))}

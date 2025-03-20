@@ -55,3 +55,18 @@ a:visited {
 p {
   width: auto;
 }
+
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #25253d;
+  border-radius: 10px;
+  border: 3px solid #ccc;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
