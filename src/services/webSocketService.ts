@@ -12,7 +12,6 @@ export const connectWebSocket = (ws: React.RefObject<WebSocket | null>, streams:
   ws.current.onmessage = (e) => {
     const message = JSON.parse(e.data);
     const data = message.data;
-    console.log(data);
     onMessageCallback(data);
   };
 
