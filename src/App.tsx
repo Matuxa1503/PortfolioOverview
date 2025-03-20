@@ -68,11 +68,14 @@ const App: FC = () => {
     <>
       {isOpenModal && <Modal setOpenModal={setOpenModal} />}
       <div className={s.header}>
-        <h1 className={s.title}>Portfolio Overview</h1>
-        <div className={s.info}>
-          <span>
+        <div className={s.logoBLock}>
+          <h1 className={s.title}>Portfolio Overview</h1>
+          <img className={s.icon} src="../public/bitcoin.png" alt="" />
+        </div>
+        <div className={s.infoBlock}>
+          <p className={s.price}>
             Цена портфеля: <b>${formatNumber(assets.totalAssetsValue)}</b>
-          </span>
+          </p>
           <button className={s.btn} onClick={() => setOpenModal(!isOpenModal)}>
             Добавить
           </button>

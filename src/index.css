@@ -4,9 +4,10 @@ body {
   font-family: 'Roboto', sans-serif;
   font-size: 1.25rem;
   font-weight: 300;
-  line-height: 1.625rem;
   margin: 0 auto;
   padding: 15px;
+  background-color: #25253d;
+  color: #fff;
 }
 
 * {
