@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { addAsset } from '../../store/assetsSlice';
 import { useAppDispatch } from '../../hooks/reduxHooks';
 import { ModalProps, SelectedCoin, Ticker } from '../../interfaces/interfaces';
@@ -6,13 +6,21 @@ import { useBinanceCoins } from '../../hooks/useBinanceCoins';
 import { popularCoins } from '../../constants/popularCoins';
 import { filterCoins, formatNumber } from '../../utils/utils';
 import s from './Modal.module.scss';
+import { Loader } from '../loader/Loader';
 
 export const Modal: FC<ModalProps> = ({ setOpenModal }) => {
   const [text, setText] = useState('');
   const [selectedCoin, setSelectedCoin] = useState<SelectedCoin | null>(null);
   const [amount, setAmount] = useState(0);
   const { coinsBinance } = useBinanceCoins();
+  const [loading, setLoading] = useState(true);
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (coinsBinance.length > 0) {
+      setLoading(false);
+    }
+  }, [coinsBinance]);
 
   const topCoins = popularCoins
     .map((popularCoin) => coinsBinance.find((coin) => coin.symbol === popularCoin))
@@ -53,21 +61,25 @@ export const Modal: FC<ModalProps> = ({ setOpenModal }) => {
       <div className={s.modal} onClick={(e) => e.stopPropagation()}>
         <input className={s.input} type="text" placeholder="Поиск монеты" value={text} onChange={(e) => setText(e.target.value)} />
 
-        <div className={s.listCoins}>
-          {filteredCoins?.length ? (
-            filteredCoins.map((coin, i) => (
-              <div key={i} className={s.coinItem} onClick={() => handleSelectCoin(coin)}>
-                <span>{coin.symbol}</span>
-                <span>${formatNumber(+coin.lastPrice)}</span>
-                <span className={parseFloat(coin.priceChangePercent) >= 0 ? s.priceUp : s.priceDown}>
-                  {formatNumber(+coin.priceChangePercent)}%
-                </span>
-              </div>
-            ))
-          ) : (
-            <p className={s.noResults}>Монета не найдена</p>
-          )}
-        </div>
+        {loading ? (
+          <Loader />
+        ) : (
+          <div className={s.listCoins}>
+            {filteredCoins?.length ? (
+              filteredCoins.map((coin, i) => (
+                <div key={i} className={s.coinItem} onClick={() => handleSelectCoin(coin)}>
+                  <span>{coin.symbol}</span>
+                  <span>${formatNumber(+coin.lastPrice)}</span>
+                  <span className={parseFloat(coin.priceChangePercent) >= 0 ? s.priceUp : s.priceDown}>
+                    {formatNumber(+coin.priceChangePercent)}%
+                  </span>
+                </div>
+              ))
+            ) : (
+              <p className={s.noResults}>Монета не найдена</p>
+            )}
+          </div>
+        )}
 
         {selectedCoin && (
           <>
