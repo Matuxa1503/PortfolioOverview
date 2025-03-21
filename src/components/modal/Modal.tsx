@@ -9,11 +9,11 @@ import s from './Modal.module.scss';
 import { Loader } from '../loader/Loader';
 
 export const Modal: FC<ModalProps> = ({ setOpenModal }) => {
-  const [text, setText] = useState('');
+  const [text, setText] = useState<string>('');
   const [selectedCoin, setSelectedCoin] = useState<SelectedCoin | null>(null);
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState<number>(0);
   const { coinsBinance } = useBinanceCoins();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -85,7 +85,7 @@ export const Modal: FC<ModalProps> = ({ setOpenModal }) => {
           <>
             <div className={s.selectedCoin}>
               <span>{selectedCoin.ticker}</span>
-              <span>${selectedCoin.lastPrice}</span>
+              <span>${amount > 0 ? (selectedCoin.lastPrice * amount).toFixed(5) : selectedCoin.lastPrice}</span>
             </div>
 
             <form
@@ -94,16 +94,26 @@ export const Modal: FC<ModalProps> = ({ setOpenModal }) => {
                 handleAddCoin();
               }}
             >
-              <input
-                className={s.input}
-                type="number"
-                placeholder="Количество"
-                step="1"
-                min="1"
-                max="1000"
-                value={amount}
-                onChange={(e) => setAmount(Number(e.target.value))}
-              />
+              <div className={s.amountCoin}>
+                <input
+                  className={s.input}
+                  type="number"
+                  placeholder="Количество"
+                  step="0.01"
+                  min="0.01"
+                  value={amount}
+                  onChange={(e) => setAmount(Number(e.target.value))}
+                />
+                <button type="button" onClick={() => setAmount(10)}>
+                  10
+                </button>
+                <button type="button" onClick={() => setAmount(100)}>
+                  100
+                </button>
+                <button type="button" onClick={() => setAmount(500)}>
+                  500
+                </button>
+              </div>
               <div className={s.btnBlock}>
                 <button className={s.btn}>Добавить</button>
                 <button className={s.btn} type="button" onClick={() => setOpenModal(false)}>

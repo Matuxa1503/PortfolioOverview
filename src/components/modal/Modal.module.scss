@@ -10,15 +10,14 @@
   align-items: center;
 
   .modal {
-    width: 600px;
+    width: 650px;
     background-color: #25253d;
-    padding: 15px;
+    padding: 25px 15px;
     border-radius: 15px;
 
     .input {
       width: 50%;
       padding: 10px 15px;
-      margin-bottom: 15px;
       border: 1px solid #ccc;
       border-radius: 10px;
       font-size: 16px;
@@ -33,7 +32,7 @@
 
     .listCoins {
       width: 100%;
-
+      margin-top: 15px;
       font-size: 25px;
       height: 400px;
       overflow-y: scroll;
@@ -65,6 +64,27 @@
       margin: 20px 0;
       gap: 10px;
       justify-content: center;
+    }
+
+    .amountCoin {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+
+      button {
+        background: none;
+        border: 1px solid #3139ce;
+        padding: 5px 10px;
+        border-radius: 10px;
+        color: #fff;
+        transition: background 0.2s ease-in-out;
+
+        &:hover {
+          background-color: #3139ce;
+        }
+      }
     }
 
     .btnBlock {
