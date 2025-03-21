@@ -1,0 +1,183 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0 70px;
+
+  .logoBLock {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    .title {
+      max-width: 600px;
+      font-size: 60px;
+      letter-spacing: 2px;
+      font-weight: 300;
+    }
+
+    .icon {
+      width: 70px;
+    }
+  }
+
+  .infoBlock {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    .price {
+      font-size: 30px;
+    }
+  }
+
+  .btn {
+    padding: 12px 26px;
+    background: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    border: 2px solid #3139ce;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+
+    &:hover {
+      background-color: #3139ce;
+    }
+  }
+}
+
+.table {
+  font-size: 25px;
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+
+  tr th {
+    padding: 0 5px;
+  }
+
+  tr td {
+    text-align: center;
+  }
+
+  .asset {
+    transition: background 0.2s ease-in-out;
+  }
+
+  .asset td {
+    padding: 25px;
+  }
+
+  .asset:hover {
+    cursor: pointer;
+    background-color: #363659;
+  }
+
+  .priceUp {
+    color: #5dd9bd;
+  }
+  .priceDown {
+    color: #ff3b3b;
+  }
+}
+
+.emptyAssets {
+  font-size: 40px;
+}
+
+@media (max-width: 1200px) {
+  .header {
+    .logoBLock {
+      .title {
+        text-align: center;
+        width: 275px;
+      }
+
+      .icon {
+        width: 100px;
+      }
+    }
+
+    .infoBlock {
+      flex-direction: column;
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .header {
+    .logoBLock {
+      .title {
+        font-size: 45px;
+        width: 200px;
+      }
+
+      .icon {
+        width: 70px;
+      }
+    }
+
+    .infoBlock {
+      flex-direction: column;
+    }
+  }
+
+  .table {
+    font-size: 22px;
+
+    .asset td {
+      padding: 15px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    margin-bottom: 40px;
+
+    .logoBLock {
+      .title {
+        font-size: 35px;
+        width: 100%;
+      }
+
+      .icon {
+        width: 50px;
+      }
+    }
+
+    .infoBlock {
+      margin-top: 20px;
+
+      .price {
+        font-size: 25px;
+      }
+    }
+  }
+
+  .table {
+    font-size: 16px;
+
+    .asset td {
+      padding: 10px;
+    }
+  }
+}
+
+@media (max-width: 425px) {
+  .header {
+    .logoBLock {
+      .title {
+        font-size: 30px;
+        width: 100%;
+      }
+
+      .icon {
+        width: 50px;
+      }
+    }
+  }
+}

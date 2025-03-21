@@ -1,10 +1,13 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:300,regular,500,700);
+
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 1.25rem;
   font-weight: 300;
-  line-height: 1.625rem;
-  margin: 0;
-  background-color: var(--ivory);
+  margin: 0 auto;
+  padding: 15px;
+  background-color: #25253d;
+  color: #fff;
 }
 
 * {
@@ -51,4 +54,19 @@ a:visited {
 
 p {
   width: auto;
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #25253d;
+  border-radius: 10px;
+  border: 3px solid #ccc;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
 }
